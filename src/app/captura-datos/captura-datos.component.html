@@ -1,0 +1,174 @@
+<div class="max-w-5xl mx-auto p-6 bg-white rounded-lg shadow-md">
+    <!-- Título Principal -->
+    <h2 class="text-3xl font-bold text-center mb-8">Captura de Datos del Paciente</h2>
+  
+    <!-- Formulario -->
+    <form (ngSubmit)="onSubmit()">
+      <!-- Sección 1: Datos Personales -->
+      <div class="mb-8">
+        <h3 class="text-2xl font-semibold mb-4">1. Datos Personales</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label for="nombre" class="block text-gray-700">Nombre</label>
+            <input id="nombre" type="text" [(ngModel)]="paciente.nombre" name="nombre" class="w-full p-2 border border-gray-300 rounded" required>
+          </div>
+          <div>
+            <label for="sexo" class="block text-gray-700">Sexo</label>
+            <select id="sexo" [(ngModel)]="paciente.sexo" name="sexo" class="w-full p-2 border border-gray-300 rounded" required>
+              <option value="masculino">Masculino</option>
+              <option value="femenino">Femenino</option>
+            </select>
+          </div>
+          <div>
+            <label for="fechaNacimiento" class="block text-gray-700">Fecha de Nacimiento</label>
+            <input id="fechaNacimiento" type="date" [(ngModel)]="paciente.fechaNacimiento" name="fechaNacimiento" class="w-full p-2 border border-gray-300 rounded" required>
+          </div>
+          <div>
+            <label for="edad" class="block text-gray-700">Edad</label>
+            <input id="edad" type="number" [(ngModel)]="paciente.edad" name="edad" class="w-full p-2 border border-gray-300 rounded" required>
+          </div>
+        </div>
+      </div>
+  
+      
+       
+      <!-- Sección 2: Datos Antropométricos -->
+      <div class="mb-8">
+        <h3 class="text-2xl font-semibold mb-4">2. Datos Antropométricos</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label for="peso" class="block text-gray-700">Peso (kg)</label>
+            <input id="peso" type="number" [(ngModel)]="paciente.peso" name="peso" class="w-full p-2 border border-gray-300 rounded" (input)="calcularIMC()">
+          </div>
+          <div>
+            <label for="alturaCm" class="block text-gray-700">Estatura (cm)</label>
+            <input id="alturaCm" type="number" [(ngModel)]="paciente.alturaCm" name="alturaCm" class="w-full p-2 border border-gray-300 rounded" (input)="calcularIMC()">
+          </div>
+          <div>
+            <label for="imc" class="block text-gray-700">IMC (Índice de Masa Corporal)</label>
+            <input id="imc" type="text" [value]="paciente.imc" class="w-full p-2 border border-gray-300 rounded" readonly>
+          </div>
+          <div>
+            <label for="cintura" class="block text-gray-700">Circunferencia de Cintura (cm)</label>
+            <input id="cintura" type="number" [(ngModel)]="paciente.cintura" name="cintura" class="w-full p-2 border border-gray-300 rounded" (input)="calcularRelacionCC()">
+          </div>
+          <div>
+            <label for="cadera" class="block text-gray-700">Circunferencia de Cadera (cm)</label>
+            <input id="cadera" type="number" [(ngModel)]="paciente.cadera" name="cadera" class="w-full p-2 border border-gray-300 rounded" (input)="calcularRelacionCC()">
+          </div>
+          <div>
+            <label for="relacionCC" class="block text-gray-700">Relación Cintura/Cadera</label>
+            <input id="relacionCC" type="text" [value]="paciente.relacionCC" class="w-full p-2 border border-gray-300 rounded" readonly>
+          </div>
+        </div>
+      </div>
+  
+      <!-- Sección 3: Gasto Energético Basal (GEB) -->
+      <div class="mb-8">
+        <h3 class="text-2xl font-semibold mb-4">3. Gasto Energético Basal (GEB)</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label for="formula" class="block text-gray-700">Fórmula</label>
+            <select id="formula" [(ngModel)]="paciente.formula" name="formula" class="w-full p-2 border border-gray-300 rounded">
+              <option value="Harris-Benedict">Harris-Benedict</option>
+              <option value="Mifflin">Mifflin</option>
+              <option value="FAO">FAO (según edad)</option>
+            </select>
+          </div>
+          <div>
+            <button
+              type="button"
+              (click)="calcularGastoEnergeticoBasal()"
+              class="bg-blue-500 text-white py-2 px-6 rounded hover:bg-blue-600"
+            >
+              Calcular GEB
+            </button>
+          </div>
+        </div>
+        <!-- Mostrar el GEB calculado -->
+        <div *ngIf="paciente.geb !== null" class="mt-4 p-4 bg-green-100 text-green-700 rounded">
+          <h4 class="text-lg font-bold">Gasto Energético Basal</h4>
+          <p>GEB: <strong>{{ paciente.geb }} kcal</strong></p>
+        </div>
+      </div>
+  
+      <!-- Sección 4: Gasto Energético Total (GET) -->
+      <div class="mb-8">
+        <h3 class="text-2xl font-semibold mb-4">4. Gasto Energético Total (GET)</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label for="factorEstres" class="block text-gray-700">Factor de Estrés (FE)</label>
+            <input id="factorEstres" type="number" [(ngModel)]="paciente.factorEstres" name="factorEstres" class="w-full p-2 border border-gray-300 rounded" placeholder="Porcentaje (%)">
+          </div>
+          <div>
+            <label for="factorActividad" class="block text-gray-700">Factor de Actividad Física (FAF)</label>
+            <input id="factorActividad" type="number" [(ngModel)]="paciente.factorActividad" name="factorActividad" class="w-full p-2 border border-gray-300 rounded" placeholder="Porcentaje (%)">
+          </div>
+          <div>
+            <button
+              type="button"
+              (click)="calcularGastoEnergeticoTotal()"
+              class="bg-blue-500 text-white py-2 px-6 rounded hover:bg-blue-600"
+            >
+              Calcular GET
+            </button>
+          </div>
+        </div>
+        <!-- Mostrar el GET calculado -->
+        <div *ngIf="paciente.get !== null" class="mt-4 p-4 bg-green-100 text-green-700 rounded">
+          <h4 class="text-lg font-bold">Gasto Energético Total</h4>
+          <p>ETA (Efecto Térmico de los Alimentos): <strong>{{ paciente.eta }} kcal</strong></p>
+          <p>GET: <strong>{{ paciente.get }} kcal</strong></p>
+        </div>
+      </div>
+        <!-- Sección 5: Distribución de Macronutrientes -->
+    <div class="mb-8">
+        <h3 class="text-2xl font-semibold mb-4">5. Distribución de Macronutrientes</h3>
+        <p class="mb-4">Ingresa los valores en gramos por kilogramo de peso corporal (g/kg).</p>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label for="carbohidratos" class="block text-gray-700">Carbohidratos (g/kg)</label>
+            <input id="carbohidratos" type="number" [(ngModel)]="macronutrientes.carbohidratosGrKg" name="carbohidratos" class="w-full p-2 border border-gray-300 rounded" placeholder="g/kg" required>
+          </div>
+          <div>
+            <label for="proteinas" class="block text-gray-700">Proteínas (g/kg)</label>
+            <input id="proteinas" type="number" [(ngModel)]="macronutrientes.proteinasGrKg" name="proteinas" class="w-full p-2 border border-gray-300 rounded" placeholder="g/kg" required>
+          </div>
+          <div>
+            <label for="lipidos" class="block text-gray-700">Lípidos (g/kg)</label>
+            <input id="lipidos" type="number" [(ngModel)]="macronutrientes.lipidosGrKg" name="lipidos" class="w-full p-2 border border-gray-300 rounded" placeholder="g/kg" required>
+          </div>
+        </div>
+        <div class="mt-4">
+          <button
+            type="button"
+            (click)="calcularDistribucionMacronutrientes()"
+            class="bg-blue-500 text-white py-2 px-6 rounded hover:bg-blue-600"
+          >
+            Calcular Distribución de Macronutrientes
+          </button>
+        </div>
+        <!-- Mostrar los resultados -->
+        <div *ngIf="macronutrientes.kcalTotales !== null" class="mt-4 p-4 bg-green-100 text-green-700 rounded">
+          <h4 class="text-lg font-bold">Distribución de Macronutrientes</h4>
+          <p><strong>Carbohidratos:</strong> {{ macronutrientes.carbohidratosGramos }} g ({{ macronutrientes.carbohidratosKcal }} kcal) - {{ macronutrientes.carbohidratosPorcentaje }}%</p>
+          <p><strong>Proteínas:</strong> {{ macronutrientes.proteinasGramos }} g ({{ macronutrientes.proteinasKcal }} kcal) - {{ macronutrientes.proteinasPorcentaje }}%</p>
+          <p><strong>Lípidos:</strong> {{ macronutrientes.lipidosGramos }} g ({{ macronutrientes.lipidosKcal }} kcal) - {{ macronutrientes.lipidosPorcentaje }}%</p>
+          <p><strong>Total kcal:</strong> {{ macronutrientes.kcalTotales }} kcal</p>
+          <p><strong>Relación Calórico-Proteica (RCP):</strong> {{ macronutrientes.rcp }} - {{ macronutrientes.rcpEstado }}</p>
+        </div>
+        <div *ngIf="macronutrientes.kcalTotales !== null" class="mt-8">
+            <h3 class="text-2xl font-semibold mb-4">6. Cálculos Complementarios</h3>
+            <div class="p-4 bg-green-100 text-green-700 rounded">
+              <p><strong>Relación Calórica No Proteica (RCNP):</strong> {{ macronutrientes.rcnp }} kcal/g N</p>
+              <p><strong>Interpretación RCNP:</strong> {{ macronutrientes.rcnpEstado }}</p>
+              <p><strong>g Nitrógeno:</strong> {{ macronutrientes.gNitrogeno }}</p>
+              <p><strong>g Urea:</strong> {{ macronutrientes.gUrea }}</p>
+              <p><strong>Flujo de Glucosa (FG):</strong> {{ macronutrientes.flujoGlucosa }} g/min</p>
+            </div>
+          </div>
+        
+      </div>
+    </form>
+  </div>
+  
