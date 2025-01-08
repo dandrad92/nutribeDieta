@@ -36,29 +36,65 @@
       <div class="mb-8">
         <h3 class="text-2xl font-semibold mb-4">2. Datos Antropométricos</h3>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+                <label for="peso" class="block text-gray-700">Peso (kg)</label>
+                <input id="peso" type="number" [(ngModel)]="paciente.peso" name="peso" class="w-full p-2 border border-gray-300 rounded" (input)="calcularIMC()">
+              </div>
+              <div>
+                <label for="alturaCm" class="block text-gray-700">Altura (cm)</label>
+                <input id="alturaCm" type="number" [(ngModel)]="paciente.alturaCm" name="alturaCm" class="w-full p-2 border border-gray-300 rounded" (input)="convertirAltura(); calcularIMC()">
+              </div>
+              <div>
+                <label for="imc" class="block text-gray-700">IMC (Índice de Masa Corporal)</label>
+                <input id="imc" type="text" [value]="paciente.imc" class="w-full p-2 border border-gray-300 rounded" readonly>
+              </div>
+          <!-- Peso Habitual -->
           <div>
-            <label for="peso" class="block text-gray-700">Peso (kg)</label>
-            <input id="peso" type="number" [(ngModel)]="paciente.peso" name="peso" class="w-full p-2 border border-gray-300 rounded" (input)="calcularIMC()">
+            <label for="pesoHabitual" class="block text-gray-700">Peso Habitual (kg)</label>
+            <input id="pesoHabitual" type="number" [(ngModel)]="paciente.pesoHabitual" name="pesoHabitual" class="w-full p-2 border border-gray-300 rounded" (input)="calcularPesoIdeal()">
           </div>
+      
+          <!-- Circunferencia de Muñeca -->
           <div>
-            <label for="alturaCm" class="block text-gray-700">Estatura (cm)</label>
-            <input id="alturaCm" type="number" [(ngModel)]="paciente.alturaCm" name="alturaCm" class="w-full p-2 border border-gray-300 rounded" (input)="calcularIMC()">
+            <label for="circunferenciaMuneca" class="block text-gray-700">Circunferencia de Muñeca (cm)</label>
+            <input id="circunferenciaMuneca" type="number" [(ngModel)]="paciente.circunferenciaMuneca" name="circunferenciaMuneca" class="w-full p-2 border border-gray-300 rounded" (input)="calcularComplecion()">
+
           </div>
+      
+          <!-- Peso Ideal -->
           <div>
-            <label for="imc" class="block text-gray-700">IMC (Índice de Masa Corporal)</label>
-            <input id="imc" type="text" [value]="paciente.imc" class="w-full p-2 border border-gray-300 rounded" readonly>
+            <label for="pesoIdeal" class="block text-gray-700">Peso Ideal (kg)</label>
+            <input id="pesoIdeal" type="text" [value]="paciente.pesoIdeal" class="w-full p-2 border border-gray-300 rounded" readonly>
           </div>
+      
+          <!-- Peso Ajustado -->
           <div>
-            <label for="cintura" class="block text-gray-700">Circunferencia de Cintura (cm)</label>
-            <input id="cintura" type="number" [(ngModel)]="paciente.cintura" name="cintura" class="w-full p-2 border border-gray-300 rounded" (input)="calcularRelacionCC()">
+            <label for="pesoAjustado" class="block text-gray-700">Peso Ajustado (kg)</label>
+            <input id="pesoAjustado" type="text" [value]="paciente.pesoAjustado" class="w-full p-2 border border-gray-300 rounded" readonly>
           </div>
+      
+          <!-- Índice Cintura-Talla (ICT) -->
           <div>
-            <label for="cadera" class="block text-gray-700">Circunferencia de Cadera (cm)</label>
-            <input id="cadera" type="number" [(ngModel)]="paciente.cadera" name="cadera" class="w-full p-2 border border-gray-300 rounded" (input)="calcularRelacionCC()">
+            <label for="ict" class="block text-gray-700">Índice Cintura-Talla (ICT)</label>
+            <input id="ict" type="text" [value]="paciente.ict" class="w-full p-2 border border-gray-300 rounded" readonly>
           </div>
+      
+          <!-- %PI -->
           <div>
-            <label for="relacionCC" class="block text-gray-700">Relación Cintura/Cadera</label>
-            <input id="relacionCC" type="text" [value]="paciente.relacionCC" class="w-full p-2 border border-gray-300 rounded" readonly>
+            <label for="interpretacionPI" class="block text-gray-700">Interpretación del %PI</label>
+            <input id="interpretacionPI" type="text" [value]="paciente.interpretacionPI" class="w-full p-2 border border-gray-300 rounded" readonly>
+          </div>
+      
+          <!-- %PH -->
+          <div>
+            <label for="interpretacionPH" class="block text-gray-700">Interpretación del %PH</label>
+            <input id="interpretacionPH" type="text" [value]="paciente.interpretacionPH" class="w-full p-2 border border-gray-300 rounded" readonly>
+          </div>
+      
+          <!-- %PP -->
+          <div>
+            <label for="pp" class="block text-gray-700">% Pérdida de Peso (%PP)</label>
+            <input id="pp" type="text" [value]="paciente.pp" class="w-full p-2 border border-gray-300 rounded" readonly>
           </div>
         </div>
       </div>
@@ -170,6 +206,6 @@
         
       </div>
     </form>
-    
+
   </div>
   
