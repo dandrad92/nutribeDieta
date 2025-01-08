@@ -32,7 +32,15 @@ export class CapturaDatosComponent {
     factorEstres: 0,
     geb: null as number | null,
     eta: null as number | null,
-    get: null as number | null
+    get: null as number | null,
+    
+  circunferenciaMuneca: 0,
+  pesoIdeal: 0,
+  pesoAjustado: 0,
+  ict: 0,
+  interpretacionPI: '',
+  interpretacionPH: '',
+  pp: 0
   };
 
 
@@ -71,6 +79,82 @@ export class CapturaDatosComponent {
   porcentajePesoHabitual: number = 0;
   interpretacionPH: string = '';
   porcentajePerdidaPeso: number = 0;
+
+  // Función para calcular el peso ideal según la complexión
+calcularPesoIdeal() {
+  if (this.paciente.alturaCm > 0) {
+    const alturaM = this.paciente.alturaCm / 100;
+    const imcIdeal = this.obtenerIMCIdeal();
+    this.paciente.pesoIdeal = parseFloat((alturaM * alturaM * imcIdeal).toFixed(2));
+    this.calcularPesoAjustado();
+  }
+}
+
+// Función para obtener el IMC ideal según la complexión y sexo
+obtenerIMCIdeal(): number {
+  const ratio = this.paciente.alturaCm / this.paciente.circunferenciaMuneca;
+  if (this.paciente.sexo === 'femenino') {
+    if (ratio > 10.9) return 21;
+    if (ratio >= 9.9 && ratio <= 10.9) return 22;
+    return 23;
+  } else {
+    if (ratio > 10.4) return 22;
+    if (ratio >= 9.6 && ratio <= 10.4) return 23;
+    return 24;
+  }
+}
+
+// Función para calcular el peso ajustado
+calcularPesoAjustado() {
+  if (this.paciente.pesoIdeal > 0 && this.paciente.peso > 0) {
+    this.paciente.pesoAjustado = parseFloat(((this.paciente.peso - this.paciente.pesoIdeal) * 0.25 + this.paciente.pesoIdeal).toFixed(2));
+  }
+}
+
+// Función para calcular el Índice Cintura-Talla (ICT)
+calcularRelacionCinturaTalla() {
+  if (this.paciente.cintura > 0 && this.paciente.alturaCm > 0) {
+    this.paciente.ict = parseFloat((this.paciente.cintura / this.paciente.alturaCm).toFixed(2));
+  }
+}
+
+// Función para calcular la interpretación del %PI y %PH
+calcularInterpretacionesPeso() {
+  if (this.paciente.pesoIdeal > 0 && this.paciente.pesoHabitual > 0) {
+    const pi = (this.paciente.peso / this.paciente.pesoIdeal) * 100;
+    const ph = (this.paciente.peso / this.paciente.pesoHabitual) * 100;
+
+    this.paciente.interpretacionPI = this.obtenerInterpretacionPI(pi);
+    this.paciente.interpretacionPH = this.obtenerInterpretacionPH(ph);
+  }
+}
+
+// Función para obtener la interpretación del %PI
+obtenerInterpretacionPI(pi: number): string {
+  if (pi > 120) return 'Obesidad';
+  if (pi >= 110 && pi <= 119) return 'Sobrepeso';
+  if (pi >= 90 && pi <= 109) return 'Normal';
+  if (pi >= 85 && pi <= 89) return 'Desnutrición leve';
+  if (pi >= 76 && pi <= 84) return 'Desnutrición moderada';
+  return 'Desnutrición grave';
+}
+
+// Función para obtener la interpretación del %PH
+obtenerInterpretacionPH(ph: number): string {
+  if (ph > 90) return 'Normal';
+  if (ph >= 85 && ph <= 90) return 'Desnutrición leve';
+  if (ph >= 75 && ph <= 84) return 'Desnutrición moderada';
+  if (ph < 75) return 'Desnutrición grave';
+  return 'Peso mínimo de supervivencia';
+}
+
+// Función para calcular %PP (Pérdida de Peso)
+calcularPP() {
+  if (this.paciente.pesoHabitual > 0 && this.paciente.peso > 0) {
+    this.paciente.pp = parseFloat((((this.paciente.pesoHabitual - this.paciente.peso) / this.paciente.pesoHabitual) * 100).toFixed(2));
+  }
+}
+  /////
 
   calcularComplecion(): void {
     if (this.paciente.alturaCm > 0 && this.paciente.circMuneca > 0) {
